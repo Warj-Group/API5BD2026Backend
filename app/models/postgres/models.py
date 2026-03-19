@@ -10,6 +10,9 @@ class DimPrograma(Base):
     codigo_programa = Column(String(20))
     nome_programa = Column(String(200))
     gerente_programa = Column(String(100))
+    gerente_tecnico = Column(String(100))
+    data_inicio = Column(Date)
+    data_fim_prevista = Column(Date)
     status = Column(String(20))
 
 class DimProjeto(Base):
@@ -19,9 +22,14 @@ class DimProjeto(Base):
     id_projeto = Column(Integer, primary_key=True, index=True)
     codigo_projeto = Column(String(20))
     nome_projeto = Column(String(200))
+    programa_id = Column(Integer, ForeignKey("dw_projeto.dim_programa.id_programa"))
     responsavel = Column(String(100))
+    custo_hora = Column(Numeric(10, 2))
     data_inicio = Column(Date)
+    data_fim_prevista = Column(Date)
     status = Column(String(20))
+
+    programa = relationship("DimPrograma")
 
 class DimMaterial(Base):
     __tablename__ = "dim_material"
@@ -29,29 +37,23 @@ class DimMaterial(Base):
 
     id_material = Column(Integer, primary_key=True, index=True)
     codigo_material = Column(String(50))
-    categoria = Column(String(100))
     descricao = Column(Text)
+    categoria = Column(String(100))
     fabricante = Column(String(100))
-    unidade_medida = Column(String(20))
-    lead_time_dias = Column(Integer)
     custo_estimado = Column(Numeric(10, 2))
+    status = Column(String(20))
 
 class DimFornecedor(Base):
     __tablename__ = "dim_fornecedor"
     __table_args__ = {"schema": "dw_projeto"}
 
     id_fornecedor = Column(Integer, primary_key=True, index=True)
+    codigo_fornecedor = Column(String(20))
     razao_social = Column(String(200))
-    nome_fantasia = Column(String(200))
     cidade = Column(String(100))
     estado = Column(String(50))
-    email = Column(String(100))
-    telefone = Column(String(30))
-    categoria_fornecedor = Column(String(50))
-    cnpj = Column(String(20))
-    condicao_pagamento = Column(String(20))
+    categoria = Column(String(100))
     status = Column(String(20))
-    data_cadastro = Column(Date)
 
 class DimUsuario(Base):
     __tablename__ = "dim_usuario"
@@ -59,7 +61,6 @@ class DimUsuario(Base):
 
     id_usuario = Column(Integer, primary_key=True, index=True)
     nome_usuario = Column(String(100))
-    departamento = Column(String(100))
 
 class DimTarefa(Base):
     __tablename__ = "dim_tarefa"
@@ -79,11 +80,14 @@ class DimData(Base):
     data = Column(Date)
     dia = Column(Integer)
     mes = Column(Integer)
+    nome_mes = Column(String(20))
     trimestre = Column(Integer)
     ano = Column(Integer)
+    dia_semana = Column(Integer)
+    nome_dia_semana = Column(String(20))
 
 class FactConsumoMateriais(Base):
-    __tablename__ = "fact_consumo_materiais"
+    __tablename__ = "fato_consumo_materiais"
     __table_args__ = {"schema": "dw_projeto"}
 
     id_fato_material = Column(Integer, primary_key=True, index=True)
@@ -103,7 +107,7 @@ class FactConsumoMateriais(Base):
     data = relationship("DimData")
 
 class FactHorasTrabalhadas(Base):
-    __tablename__ = "fact_horas_trabalhadas"
+    __tablename__ = "fato_horas_trabalhadas"
     __table_args__ = {"schema": "dw_projeto"}
 
     id_fato_horas = Column(Integer, primary_key=True, index=True)
@@ -113,8 +117,6 @@ class FactHorasTrabalhadas(Base):
     usuario_id = Column(Integer, ForeignKey("dw_projeto.dim_usuario.id_usuario"))
     data_id = Column(Integer, ForeignKey("dw_projeto.dim_data.id_data"))
     horas_trabalhadas = Column(Numeric(6, 2))
-    custo_hora = Column(Numeric(10, 2))
-    custo_total_hora = Column(Numeric(12, 2))
 
     programa = relationship("DimPrograma")
     projeto = relationship("DimProjeto")
