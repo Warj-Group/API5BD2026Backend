@@ -1,0 +1,8 @@
+Index: Conceitual.md
+===================================================================
+diff --git a/Conceitual.md b/Conceitual.md
+--- a/Conceitual.md	(revision d52187058389f91de7f45d1fb44d2a0dfa9e98a7)
++++ b/Conceitual.md	(date 1773924145451)
+@@ -1,0 +1,1 @@
++![img.png](img.png)
+\ No newline at end of file
