@@ -5,13 +5,13 @@ on:
     # O SonarCloud analisará cada commit feito nestas branches
     branches:
       - main
-      - sprint-1
-      - sprint-2
-      - sprint-3
   pull_request:
     # O SonarCloud analisará o PR quando o destino (target) for a main
     branches:
       - main
+      - sprint-1
+      - sprint-2
+      - sprint-3
     types: [opened, synchronize, reopened]
 
 jobs:
