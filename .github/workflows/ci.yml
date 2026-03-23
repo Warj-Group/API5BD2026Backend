@@ -26,7 +26,7 @@ jobs:
 
       - name: SonarCloud Scan
         # SHA correspondente à versão estável v4.0.0
-        uses: SonarSource/sonarcloud-github-action@34e114876b0b11c390a56381ad16ebd13914f8d5
+        uses: SonarSource/sonarqube-scan-action@v4.2.1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
