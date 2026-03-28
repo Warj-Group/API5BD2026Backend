@@ -16,7 +16,7 @@ class Settings:
     DB_NAME: str = os.getenv("DB_NAME", "project_analytics")
 
     @property
-    def DATABASE_URL(self) -> str:
+    def database_url(self) -> str:
         return f"{self.DB_DRIVER}://{self.DB_USER}:{self.DB_PASSWORD}@{self.DB_HOST}:{self.DB_PORT}/{self.DB_NAME}"
 
 
