@@ -48,7 +48,7 @@ def get_materiais(db: Session = Depends(get_db)):
         "descricao": m.descricao,
         "categoria": m.categoria,
         "fabricante": m.fabricante,
-        "custo_estimado": m.custo_estimado,
+        "custo_estimado": float(m.custo_estimado) if m.custo_estimado is not None else None,
         "status": m.status,
     } for m in materiais]
 
