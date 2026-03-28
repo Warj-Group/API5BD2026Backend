@@ -33,16 +33,22 @@ async def root():
 async def health():
     return {"status": "healthy"}
 
+import os
+import uvicorn
+
 @app.get("/db-test")
 async def db_test(db: Session = Depends(get_db)):
     try:
-        # Simple query to test connection
         result = db.execute("SELECT 1").fetchone()
         return {"status": "Database connected", "result": result[0]}
     except Exception as e:
         return {"status": "Database connection failed", "error": str(e)}
 
-if __name__ == "__main__":
-    import uvicorn
 
-    uvicorn.run(app, host="0.0.0.0", port=8000, reload=True)
+if __name__ == "__main__":
+    uvicorn.run(
+        app,
+        host=os.getenv("APP_HOST", "127.0.0.1"),
+        port=int(os.getenv("APP_PORT", "8000")),
+        reload=True
+    )
