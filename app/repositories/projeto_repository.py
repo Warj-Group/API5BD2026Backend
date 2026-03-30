@@ -17,11 +17,11 @@ def get_projeto_by_id(db: Session, projeto_id: int) -> Optional[DimProjeto]:
     return db.query(DimProjeto).filter(DimProjeto.id_projeto == projeto_id).first()
 
 
+def get_projeto_by_codigo(db: Session, codigo_projeto: str) -> Optional[DimProjeto]:
+    """Retorna um projeto pelo codigo_projeto. None se não existir."""
+    return db.query(DimProjeto).filter(DimProjeto.codigo_projeto == codigo_projeto).first()
+
+
 def get_projetos_by_programa(db: Session, programa_id: int) -> List[DimProjeto]:
     """Retorna todos os projetos vinculados a um programa."""
     return db.query(DimProjeto).filter(DimProjeto.programa_id == programa_id).order_by(DimProjeto.id_projeto).all()
-
-
-def get_projetos_by_status(db: Session, status: str) -> List[DimProjeto]:
-    """Filtra projetos por status."""
-    return db.query(DimProjeto).filter(DimProjeto.status == status).order_by(DimProjeto.id_projeto).all()

@@ -19,13 +19,6 @@ def get_consumo_by_id(db: Session, fato_id: int) -> Optional[FactConsumoMateriai
     ).first()
 
 
-def get_consumo_by_programa(db: Session, programa_id: int) -> List[FactConsumoMateriais]:
-    """Filtra consumo de materiais por programa."""
-    return db.query(FactConsumoMateriais).filter(
-        FactConsumoMateriais.programa_id == programa_id
-    ).all()
-
-
 def get_consumo_by_projeto(db: Session, projeto_id: int) -> List[FactConsumoMateriais]:
     """Filtra consumo de materiais por projeto."""
     return db.query(FactConsumoMateriais).filter(
@@ -40,15 +33,11 @@ def get_consumo_by_material(db: Session, material_id: int) -> List[FactConsumoMa
     ).all()
 
 
-def get_custo_total_by_programa(db: Session, programa_id: int) -> float:
-    """
-    Retorna a soma do custo_total de todos os consumos de um programa.
-    Retorna 0.0 se não houver registros.
-    """
-    resultado = db.query(func.sum(FactConsumoMateriais.custo_total)).filter(
-        FactConsumoMateriais.programa_id == programa_id
-    ).scalar()
-    return resultado or 0.0
+def get_consumo_by_fornecedor(db: Session, fornecedor_id: int) -> List[FactConsumoMateriais]:
+    """Filtra consumo de materiais por fornecedor."""
+    return db.query(FactConsumoMateriais).filter(
+        FactConsumoMateriais.fornecedor_id == fornecedor_id
+    ).all()
 
 
 def get_custo_total_by_projeto(db: Session, projeto_id: int) -> float:
@@ -69,5 +58,16 @@ def get_quantidade_total_by_material(db: Session, material_id: int) -> float:
     """
     resultado = db.query(func.sum(FactConsumoMateriais.quantidade_empenhada)).filter(
         FactConsumoMateriais.material_id == material_id
+    ).scalar()
+    return resultado or 0.0
+
+
+def get_custo_total_by_fornecedor(db: Session, fornecedor_id: int) -> float:
+    """
+    Retorna a soma do custo_total de um fornecedor em todos os consumos.
+    Retorna 0.0 se não houver registros.
+    """
+    resultado = db.query(func.sum(FactConsumoMateriais.custo_total)).filter(
+        FactConsumoMateriais.fornecedor_id == fornecedor_id
     ).scalar()
     return resultado or 0.0

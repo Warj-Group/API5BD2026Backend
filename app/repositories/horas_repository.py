@@ -78,3 +78,36 @@ def get_total_horas_by_programa(db: Session, programa_id: int) -> float:
         FactHorasTrabalhadas.programa_id == programa_id
     ).scalar()
     return resultado or 0.0
+
+
+def get_custo_total_by_projeto(db: Session, projeto_id: int) -> float:
+    """
+    Retorna a soma do custo_total de um projeto.
+    Retorna 0.0 se não houver registros.
+    """
+    resultado = db.query(func.sum(FactHorasTrabalhadas.custo_total)).filter(
+        FactHorasTrabalhadas.projeto_id == projeto_id
+    ).scalar()
+    return resultado or 0.0
+
+
+def get_custo_total_by_usuario(db: Session, usuario_id: int) -> float:
+    """
+    Retorna a soma do custo_total de um usuário.
+    Retorna 0.0 se não houver registros.
+    """
+    resultado = db.query(func.sum(FactHorasTrabalhadas.custo_total)).filter(
+        FactHorasTrabalhadas.usuario_id == usuario_id
+    ).scalar()
+    return resultado or 0.0
+
+
+def get_custo_total_by_programa(db: Session, programa_id: int) -> float:
+    """
+    Retorna a soma do custo_total de todos os projetos de um programa.
+    Retorna 0.0 se não houver registros.
+    """
+    resultado = db.query(func.sum(FactHorasTrabalhadas.custo_total)).filter(
+        FactHorasTrabalhadas.programa_id == programa_id
+    ).scalar()
+    return resultado or 0.0

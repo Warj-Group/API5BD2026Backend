@@ -16,11 +16,11 @@ def get_fornecedor_by_id(db: Session, fornecedor_id: int) -> Optional[DimFornece
     return db.query(DimFornecedor).filter(DimFornecedor.id_fornecedor == fornecedor_id).first()
 
 
+def get_fornecedor_by_codigo(db: Session, codigo_fornecedor: str) -> Optional[DimFornecedor]:
+    """Retorna um fornecedor pelo codigo_fornecedor. None se não existir."""
+    return db.query(DimFornecedor).filter(DimFornecedor.codigo_fornecedor == codigo_fornecedor).first()
+
+
 def get_fornecedores_by_estado(db: Session, estado: str) -> List[DimFornecedor]:
     """Filtra fornecedores por estado (UF)."""
     return db.query(DimFornecedor).filter(DimFornecedor.estado == estado).order_by(DimFornecedor.id_fornecedor).all()
-
-
-def get_fornecedores_by_categoria(db: Session, categoria: str) -> List[DimFornecedor]:
-    """Filtra fornecedores por categoria."""
-    return db.query(DimFornecedor).filter(DimFornecedor.categoria == categoria).order_by(DimFornecedor.id_fornecedor).all()
