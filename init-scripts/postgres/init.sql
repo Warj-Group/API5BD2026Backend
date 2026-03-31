@@ -125,6 +125,3 @@ CREATE TABLE fato_compras (
     FOREIGN KEY (fornecedor_id) REFERENCES dim_fornecedor(id_fornecedor),
     FOREIGN KEY (data_id) REFERENCES dim_data(id_data)
 );
-
-
-# Sem essa tabela o ELT não vai rodar legal.
