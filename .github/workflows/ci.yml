@@ -24,7 +24,7 @@ jobs:
 
       - name: SonarCloud Scan
         # Usamos a action v3.1.0 específica para SonarCloud
-        uses: SonarSource/sonarcloud-github-action@db501078e937e4fd9c9e42994406022819776090
+        uses: SonarSource/sonarcloud-github-action@e28026779bc98ef5c0326442ef57b85e054a852c
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
