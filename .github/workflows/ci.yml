@@ -23,7 +23,7 @@ jobs:
           fetch-depth: 0  # Necessário para que o Sonar analise o histórico e blame
 
       - name: SonarCloud Scan
-        # Usamos a action v3.1.0 específica para SonarCloud
+        # Usamos a action v4.1.0 específica para SonarCloud
         uses: SonarSource/sonarqube-scan-action@2500896589ef8f7247069a56136f8dc177c27ccf
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}  
