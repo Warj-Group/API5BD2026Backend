@@ -5,7 +5,7 @@ from app.db.database import get_db
 from app.models.postgres.models import (
     DimPrograma, DimProjeto, DimMaterial, DimFornecedor,
     DimUsuario, DimTarefa, DimData,
-    FactConsumoMateriais, FactHorasTrabalhadas
+    FactConsumoMateriais, FactHorasTrabalhadas, DimPedidoCompra, FactCompras
 )
 
 router = APIRouter(prefix="/data", tags=["data"])
@@ -19,9 +19,6 @@ def get_programas(db: Session = Depends(get_db)):
         "nome_programa": p.nome_programa,
         "gerente_programa": p.gerente_programa,
         "gerente_tecnico": p.gerente_tecnico,
-        "data_inicio": p.data_inicio,
-        "data_fim_prevista": p.data_fim_prevista,
-        "status": p.status,
     } for p in programas]
 
 @router.get("/projetos", response_model=List[dict])
@@ -33,10 +30,6 @@ def get_projetos(db: Session = Depends(get_db)):
         "nome_projeto": p.nome_projeto,
         "programa_id": p.programa_id,
         "responsavel": p.responsavel,
-        "custo_hora": p.custo_hora,
-        "data_inicio": p.data_inicio,
-        "data_fim_prevista": p.data_fim_prevista,
-        "status": p.status,
     } for p in projetos]
 
 @router.get("/materiais", response_model=List[dict])
@@ -48,8 +41,6 @@ def get_materiais(db: Session = Depends(get_db)):
         "descricao": m.descricao,
         "categoria": m.categoria,
         "fabricante": m.fabricante,
-        "custo_estimado": m.custo_estimado,
-        "status": m.status,
     } for m in materiais]
 
 @router.get("/fornecedores", response_model=List[dict])
@@ -61,8 +52,6 @@ def get_fornecedores(db: Session = Depends(get_db)):
         "razao_social": f.razao_social,
         "cidade": f.cidade,
         "estado": f.estado,
-        "categoria": f.categoria,
-        "status": f.status,
     } for f in fornecedores]
 
 @router.get("/usuarios", response_model=List[dict])
@@ -84,28 +73,58 @@ def get_datas(db: Session = Depends(get_db)):
         "dia": d.dia,
         "mes": d.mes,
         "nome_mes": d.nome_mes,
-        "trimestre": d.trimestre,
-        "ano": d.ano,
-        "dia_semana": d.dia_semana,
         "nome_dia_semana": d.nome_dia_semana,
     } for d in datas]
+
+@router.get("/pedidos-compra", response_model=List[dict])
+def get_pedidos_compra(db: Session = Depends(get_db)):
+    pedidos = db.query(DimPedidoCompra).all()
+    return [{
+        "id": p.id_pedido,
+        "numero_pedido": p.numero_pedido,
+        "fornecedor_id": p.fornecedor_id,
+        "data_pedido": p.data_pedido,
+        "data_previsao_entrega": p.data_previsao_entrega,
+        "status": p.status,
+    } for p in pedidos]
 
 @router.get("/consumo-materiais", response_model=List[dict])
 def get_consumo_materiais(db: Session = Depends(get_db)):
     consumos = db.query(FactConsumoMateriais).all()
     return [{
         "id": c.id_fato_material,
-        "programa_id": c.programa_id,
         "projeto_id": c.projeto_id,
         "material_id": c.material_id,
         "fornecedor_id": c.fornecedor_id,
         "data_id": c.data_id,
         "quantidade_empenhada": c.quantidade_empenhada,
-        "custo_unitario": c.custo_unitario,
-        "custo_total": c.custo_total,
+        "custo_unitario": float(c.custo_unitario) if c.custo_unitario is not None else None,
+        "custo_total": float(c.custo_total) if c.custo_total is not None else None,
     } for c in consumos]
 
 @router.get("/horas-trabalhadas", response_model=List[dict])
 def get_horas_trabalhadas(db: Session = Depends(get_db)):
     horas = db.query(FactHorasTrabalhadas).all()
-    return [{"id": h.id_fato_horas, "programa_id": h.programa_id, "projeto_id": h.projeto_id, "tarefa_id": h.tarefa_id, "usuario_id": h.usuario_id, "data_id": h.data_id, "horas_trabalhadas": h.horas_trabalhadas} for h in horas]
+    return [{
+        "id": h.id_fato_horas,
+        "programa_id": h.programa_id,
+        "projeto_id": h.projeto_id,
+        "tarefa_id": h.tarefa_id,
+        "usuario_id": h.usuario_id,
+        "data_id": h.data_id,
+        "horas_trabalhadas": float(h.horas_trabalhadas) if h.horas_trabalhadas is not None else None,
+        "custo_hora": float(h.custo_hora) if h.custo_hora is not None else None,
+        "custo_total": float(h.custo_total) if h.custo_total is not None else None,
+    } for h in horas]
+
+@router.get("/compras", response_model=List[dict])
+def get_compras(db: Session = Depends(get_db)):
+    compras = db.query(FactCompras).all()
+    return [{
+        "id": c.id_fato_compra,
+        "pedido_id": c.pedido_id,
+        "projeto_id": c.projeto_id,
+        "fornecedor_id": c.fornecedor_id,
+        "data_id": c.data_id,
+        "valor_total": float(c.valor_total) if c.valor_total is not None else None,
+    } for c in compras]
