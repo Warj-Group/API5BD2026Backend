@@ -68,7 +68,6 @@ CREATE TABLE dim_pedido_compra (
 
 CREATE TABLE fato_horas_trabalhadas (
     id_fato_horas SERIAL PRIMARY KEY,
-    programa_id INT,
     projeto_id INT,
     tarefa_id INT,
     usuario_id INT,
@@ -76,7 +75,6 @@ CREATE TABLE fato_horas_trabalhadas (
     horas_trabalhadas NUMERIC(6,2),
     custo_hora NUMERIC(10,2),
     custo_total NUMERIC(12,2),
-    FOREIGN KEY (programa_id) REFERENCES dim_programa(id_programa),
     FOREIGN KEY (projeto_id) REFERENCES dim_projeto(id_projeto),
     FOREIGN KEY (tarefa_id) REFERENCES dim_tarefa(id_tarefa),
     FOREIGN KEY (usuario_id) REFERENCES dim_usuario(id_usuario),
@@ -98,15 +96,16 @@ CREATE TABLE fato_consumo_materiais (
     FOREIGN KEY (data_id) REFERENCES dim_data(id_data)
 );
 
-CREATE TABLE fato_compras (
+CREATE TABLE fato_compras
+(
     id_fato_compra SERIAL PRIMARY KEY,
-    pedido_id INT,
-    projeto_id INT,
-    fornecedor_id INT,
-    data_id INT,
-    valor_total NUMERIC(12,2),
-    FOREIGN KEY (pedido_id) REFERENCES dim_pedido_compra(id_pedido),
-    FOREIGN KEY (projeto_id) REFERENCES dim_projeto(id_projeto),
-    FOREIGN KEY (fornecedor_id) REFERENCES dim_fornecedor(id_fornecedor),
-    FOREIGN KEY (data_id) REFERENCES dim_data(id_data)
+    pedido_id      INT,
+    projeto_id     INT,
+    fornecedor_id  INT,
+    data_id        INT,
+    valor_total    NUMERIC(12, 2),
+    FOREIGN KEY (pedido_id) REFERENCES dim_pedido_compra (id_pedido),
+    FOREIGN KEY (projeto_id) REFERENCES dim_projeto (id_projeto),
+    FOREIGN KEY (fornecedor_id) REFERENCES dim_fornecedor (id_fornecedor),
+    FOREIGN KEY (data_id) REFERENCES dim_data (id_data)
 );
