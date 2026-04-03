@@ -4,3 +4,5 @@ WARJ-10: Adicionado Sprint-1 para inicialiação do projeto.
 
 
 [Databases](database/Db.md)
+
+Alterações em readme!
