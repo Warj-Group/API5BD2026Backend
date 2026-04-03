@@ -10,7 +10,7 @@ from app.models.postgres.models import (
     FactConsumoMateriais,
     FactHorasTrabalhadas,
 )
-from app.schemas.dashboard import DashboardProjetoResponse
+from app.schemas.dashboard import DashboardProjetoResponse, DashboardResumoResponse
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
@@ -98,3 +98,87 @@ async def get_dashboard_projetos(db: Session = Depends(get_db)):
         )
         for row in resultados
     ]
+
+@router.get("/resumo", response_model=DashboardResumoResponse)
+async def get_dashboard_resumo(db: Session = Depends(get_db)):
+    materiais_subquery = (
+        db.query(
+            FactConsumoMateriais.projeto_id.label("projeto_id"),
+            func.coalesce(
+                func.sum(FactConsumoMateriais.custo_total),
+                0
+            ).label("custo_materiais"),
+        )
+        .group_by(FactConsumoMateriais.projeto_id)
+        .subquery()
+    )
+
+    horas_subquery = (
+        db.query(
+            FactHorasTrabalhadas.projeto_id.label("projeto_id"),
+            func.coalesce(
+                func.sum(FactHorasTrabalhadas.horas_trabalhadas),
+                0
+            ).label("total_horas"),
+        )
+        .group_by(FactHorasTrabalhadas.projeto_id)
+        .subquery()
+    )
+
+    custo_hora_expr = func.coalesce(DimProjeto.custo_hora, 0)
+    total_horas_expr = func.coalesce(horas_subquery.c.total_horas, 0)
+    custo_materiais_expr = func.coalesce(materiais_subquery.c.custo_materiais, 0)
+
+    custo_horas_expr = cast(
+        total_horas_expr * custo_hora_expr,
+        Numeric(12, 2)
+    )
+
+    custo_total_expr = cast(
+        custo_materiais_expr + custo_horas_expr,
+        Numeric(12, 2)
+    )
+
+    resultado = (
+        db.query(
+            func.count(DimProjeto.id_projeto).label("total_projetos"),
+            cast(
+                func.coalesce(func.sum(custo_materiais_expr), 0),
+                Numeric(12, 2)
+            ).label("custo_materiais_geral"),
+            cast(
+                func.coalesce(func.sum(total_horas_expr), 0),
+                Numeric(12, 2)
+            ).label("total_horas_geral"),
+            cast(
+                func.coalesce(func.sum(custo_horas_expr), 0),
+                Numeric(12, 2)
+            ).label("custo_horas_geral"),
+            cast(
+                func.coalesce(func.sum(custo_total_expr), 0),
+                Numeric(12, 2)
+            ).label("custo_total_geral"),
+            cast(
+                func.coalesce(func.avg(custo_total_expr), 0),
+                Numeric(12, 2)
+            ).label("custo_medio_por_projeto"),
+        )
+        .outerjoin(
+            materiais_subquery,
+            DimProjeto.id_projeto == materiais_subquery.c.projeto_id
+        )
+        .outerjoin(
+            horas_subquery,
+            DimProjeto.id_projeto == horas_subquery.c.projeto_id
+        )
+        .one()
+    )
+
+    return DashboardResumoResponse(
+        total_projetos=resultado.total_projetos or 0,
+        custo_total_geral=resultado.custo_total_geral or Decimal("0.00"),
+        custo_medio_por_projeto=resultado.custo_medio_por_projeto or Decimal("0.00"),
+        total_horas_geral=resultado.total_horas_geral or Decimal("0.00"),
+        custo_materiais_geral=resultado.custo_materiais_geral or Decimal("0.00"),
+        custo_horas_geral=resultado.custo_horas_geral or Decimal("0.00"),
+    )

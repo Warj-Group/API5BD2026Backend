@@ -15,3 +15,13 @@ class DashboardProjetoResponse(BaseModel):
     custo_total: Decimal
 
     model_config = ConfigDict(from_attributes=True)
+
+class DashboardResumoResponse(BaseModel):
+    total_projetos: int
+    custo_total_geral: Decimal
+    custo_medio_por_projeto: Decimal
+    total_horas_geral: Decimal
+    custo_materiais_geral: Decimal
+    custo_horas_geral: Decimal
+
+    model_config = ConfigDict(from_attributes=True)
