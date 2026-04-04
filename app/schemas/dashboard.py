@@ -1,4 +1,5 @@
 from decimal import Decimal
+
 from pydantic import BaseModel, ConfigDict
 
 
@@ -15,6 +16,7 @@ class DashboardProjetoResponse(BaseModel):
     custo_total: Decimal
 
     model_config = ConfigDict(from_attributes=True)
+
 
 class DashboardResumoResponse(BaseModel):
     total_projetos: int
