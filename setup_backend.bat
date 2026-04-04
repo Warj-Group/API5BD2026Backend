@@ -11,7 +11,7 @@ where python >nul 2>nul || (echo [ERRO] python nao encontrado. & pause & exit /b
 
 echo [1/6] Instalando dependencias de Git (Husky + Commitlint)...
 call npm init -y
-call npm install --save-dev husky @commitlint/cli @commitlint/config-conventional
+call npm install --ignore-scripts --save-dev husky @commitlint/cli @commitlint/config-conventional
 
 echo [2/6] Instalando dependencias a partir do requirements.txt...
 call pip install -r requirements.txt

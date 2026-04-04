@@ -11,7 +11,7 @@ fi
 
 echo "📦 [1/6] Instalando Git Hooks (Node)..."
 npm init -y
-npm install --save-dev husky @commitlint/cli @commitlint/config-conventional
+npm install --ignore-scripts --save-dev husky @commitlint/cli @commitlint/config-conventional
 
 echo "⚡ [2/6] Instalando dependências a partir do requirements.txt..."
 pip install -r requirements.txt
