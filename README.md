@@ -14,7 +14,11 @@
 
 ## Initial Configuration
 
-It is required to use **Python 3.11**. You can download it from the [official Python website](https://www.python.org/downloads/release/python-3110/).
+It is required to use:
+
+**Python 3.11**, download: [official Python website](https://www.python.org/downloads/release/python-3110/).
+
+**Docker**, download: [official Docker website](https://www.docker.com/get-started/]
 
 <br>
 
@@ -79,6 +83,11 @@ sleep 10
 python -m uvicorn app.main:app --host 0.0.0.0 --port 8000 --reload
 ```
 Or you can run the `run.sh` script in the project root directory.
+
+Accessing backend tools:
+
+- Endpoints: localhost:8000/docs
+- Backend JSON: localhost:8000
 
 <br> 
 

@@ -4,7 +4,7 @@ REM Activate virtual environment
 call venv\Scripts\activate
 
 REM Install requirements if needed
-pip install -r requirements.txt
+REM pip install -r requirements.txt
 
 REM Start Docker Compose
 docker compose up -d
