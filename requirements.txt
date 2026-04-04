@@ -3,3 +3,7 @@ uvicorn==0.24.0
 sqlalchemy==2.0.25
 python-dotenv==1.0.0
 pg8000==1.31.2
+psycopg2-binary==2.9.9
+ruff==0.15.8
+mypy==1.9.0
+pip==26.0.1

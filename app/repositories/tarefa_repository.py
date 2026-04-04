@@ -1,10 +1,11 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func
 from typing import List, Optional
+
+from sqlalchemy.orm import Session
 
 from app.models.postgres.models import (
     DimTarefa,
 )
+
 
 def get_tarefas(db: Session) -> List[DimTarefa]:
     """Retorna todas as tarefas cadastradas."""
@@ -23,4 +24,9 @@ def get_tarefa_by_codigo(db: Session, codigo_tarefa: str) -> Optional[DimTarefa]
 
 def get_tarefas_by_status(db: Session, status: str) -> List[DimTarefa]:
     """Filtra tarefas por status."""
-    return db.query(DimTarefa).filter(DimTarefa.status == status).order_by(DimTarefa.id_tarefa).all()
+    return (
+        db.query(DimTarefa)
+        .filter(DimTarefa.status == status)
+        .order_by(DimTarefa.id_tarefa)
+        .all()
+    )

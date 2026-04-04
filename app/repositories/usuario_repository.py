@@ -1,6 +1,6 @@
-from sqlalchemy.orm import Session
-from sqlalchemy import func
 from typing import List, Optional
+
+from sqlalchemy.orm import Session
 
 from app.models.postgres.models import (
     DimUsuario,

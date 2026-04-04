@@ -1,6 +1,8 @@
-from sqlalchemy import Column, Integer, String, Date, Numeric, Text, ForeignKey
+from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String, Text
 from sqlalchemy.orm import relationship
+
 from app.db.database import Base
+
 
 class DimPrograma(Base):
     __tablename__ = "dim_programa"
@@ -11,6 +13,7 @@ class DimPrograma(Base):
     nome_programa = Column(String(200))
     gerente_programa = Column(String(100))
     gerente_tecnico = Column(String(100))
+
 
 class DimProjeto(Base):
     __tablename__ = "dim_projeto"
@@ -24,6 +27,7 @@ class DimProjeto(Base):
 
     programa = relationship("DimPrograma")
 
+
 class DimMaterial(Base):
     __tablename__ = "dim_material"
     __table_args__ = {"schema": "dw_projeto"}
@@ -33,6 +37,7 @@ class DimMaterial(Base):
     descricao = Column(Text)
     categoria = Column(String(100))
     fabricante = Column(String(100))
+
 
 class DimFornecedor(Base):
     __tablename__ = "dim_fornecedor"
@@ -44,12 +49,14 @@ class DimFornecedor(Base):
     cidade = Column(String(100))
     estado = Column(String(50))
 
+
 class DimUsuario(Base):
     __tablename__ = "dim_usuario"
     __table_args__ = {"schema": "dw_projeto"}
 
     id_usuario = Column(Integer, primary_key=True, index=True)
     nome_usuario = Column(String(100), unique=True)
+
 
 class DimTarefa(Base):
     __tablename__ = "dim_tarefa"
@@ -60,6 +67,7 @@ class DimTarefa(Base):
     titulo = Column(String(200))
     estimativa_horas = Column(Integer)
     status = Column(String(20))
+
 
 class DimData(Base):
     __tablename__ = "dim_data"
@@ -72,18 +80,22 @@ class DimData(Base):
     nome_mes = Column(String(20))
     nome_dia_semana = Column(String(20))
 
+
 class DimPedidoCompra(Base):
     __tablename__ = "dim_pedido_compra"
     __table_args__ = {"schema": "dw_projeto"}
 
     id_pedido = Column(Integer, primary_key=True, index=True)
     numero_pedido = Column(String(20), unique=True)
-    fornecedor_id = Column(Integer, ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor"))
+    fornecedor_id = Column(
+        Integer, ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor")
+    )
     data_pedido = Column(Date)
     data_previsao_entrega = Column(Date)
     status = Column(String(20))
 
     fornecedor = relationship("DimFornecedor")
+
 
 class FactConsumoMateriais(Base):
     __tablename__ = "fato_consumo_materiais"
@@ -92,7 +104,9 @@ class FactConsumoMateriais(Base):
     id_fato_material = Column(Integer, primary_key=True, index=True)
     projeto_id = Column(Integer, ForeignKey("dw_projeto.dim_projeto.id_projeto"))
     material_id = Column(Integer, ForeignKey("dw_projeto.dim_material.id_material"))
-    fornecedor_id = Column(Integer, ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor"))
+    fornecedor_id = Column(
+        Integer, ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor")
+    )
     data_id = Column(Integer, ForeignKey("dw_projeto.dim_data.id_data"))
     quantidade_empenhada = Column(Integer)
     custo_unitario = Column(Numeric(10, 2))
@@ -102,6 +116,7 @@ class FactConsumoMateriais(Base):
     material = relationship("DimMaterial")
     fornecedor = relationship("DimFornecedor")
     data = relationship("DimData")
+
 
 class FactHorasTrabalhadas(Base):
     __tablename__ = "fato_horas_trabalhadas"
@@ -123,6 +138,7 @@ class FactHorasTrabalhadas(Base):
     usuario = relationship("DimUsuario")
     data = relationship("DimData")
 
+
 class FactCompras(Base):
     __tablename__ = "fato_compras"
     __table_args__ = {"schema": "dw_projeto"}
@@ -130,7 +146,9 @@ class FactCompras(Base):
     id_fato_compra = Column(Integer, primary_key=True, index=True)
     pedido_id = Column(Integer, ForeignKey("dw_projeto.dim_pedido_compra.id_pedido"))
     projeto_id = Column(Integer, ForeignKey("dw_projeto.dim_projeto.id_projeto"))
-    fornecedor_id = Column(Integer, ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor"))
+    fornecedor_id = Column(
+        Integer, ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor")
+    )
     data_id = Column(Integer, ForeignKey("dw_projeto.dim_data.id_data"))
     valor_total = Column(Numeric(12, 2))
 

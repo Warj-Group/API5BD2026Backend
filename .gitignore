@@ -37,7 +37,6 @@ Desktop.ini
 _site/
 build/
 dist/
-public/
 out/
 
 # MkDocs
@@ -69,6 +68,8 @@ __pycache__/
 .env
 .venv
 venv/
+.ruff_cache/
+.mypy_cache/
 
 # =========================
 # ENVIRONMENT FILES
