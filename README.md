@@ -88,6 +88,7 @@ Accessing backend tools:
 
 - Endpoints: localhost:8000/docs
 - Backend JSON: localhost:8000
+- PostgreSQL PgAdmin: localhost:8080/login?next=/browser/
 
 <br> 
 
