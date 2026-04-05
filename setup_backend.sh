@@ -1,22 +1,30 @@
 #!/bin/bash
 
-echo "========================================================"
+SEPARATOR="========================================================"
+
+echo "$SEPARATOR"
 echo "  WARJ-GROUP - Configurando Ambiente BACKEND (PYTHON)"
-echo "========================================================"
+echo "$SEPARATOR"
 
 if ! command -v npm &> /dev/null || ! command -v python3 &> /dev/null; then
     echo "❌ ERRO: npm ou python3 não encontrados."
     exit 1
 fi
 
-echo "📦 [1/6] Instalando Git Hooks (Node)..."
+echo "🐍 [1/7] Criando e ativando ambiente virtual (venv)..."
+if [ ! -d "venv" ]; then
+    python3 -m venv venv
+fi
+source venv/bin/activate
+
+echo "📦 [2/7] Instalando Git Hooks (Node)..."
 npm init -y
 npm install --ignore-scripts --save-dev husky @commitlint/cli @commitlint/config-conventional
 
-echo "⚡ [2/6] Instalando dependências a partir do requirements.txt..."
+echo "⚡ [3/7] Instalando dependências a partir do requirements.txt..."
 pip install -r requirements.txt
 
-echo "⚙️  [3/6] Criando pyproject.toml..."
+echo "⚙️  [4/7] Criando pyproject.toml..."
 cat << 'EOF' > pyproject.toml
 [tool.ruff]
 line-length = 88
@@ -31,7 +39,7 @@ python_version = "3.11"
 ignore_missing_imports = true
 EOF
 
-echo "📜 [4/6] Criando commitlint.config.js..."
+echo "📜 [5/7] Criando commitlint.config.js..."
 cat << 'EOF' > commitlint.config.js
 module.exports = {
   parserPreset: {
@@ -48,10 +56,10 @@ module.exports = {
 };
 EOF
 
-echo "🐶 [5/6] Inicializando Husky..."
+echo "🐶 [6/7] Inicializando Husky..."
 npx husky init
 
-echo "🛠️ [6/6] Configurando Hooks do Husky..."
+echo "🛠️ [7/7] Configurando Hooks do Husky..."
 
 cat << 'EOF' > .husky/commit-msg
 #!/bin/bash
@@ -83,6 +91,6 @@ EOF
 chmod +x .husky/commit-msg
 chmod +x .husky/pre-commit
 
-echo "========================================================"
+echo "$SEPARATOR"
 echo "  ✅ SUCESSO! Ambiente backend configurado."
-echo "========================================================"
+echo "$SEPARATOR"

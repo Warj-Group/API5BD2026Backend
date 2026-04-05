@@ -18,7 +18,9 @@ It is required to use:
 
 **Python 3.11**, download: [official Python website](https://www.python.org/downloads/release/python-3110/).
 
-**Docker**, download: [official Docker website](https://www.docker.com/get-started/]
+**Node.js 22.22.0**, download: [official Node.js Website](https://nodejs.org/en/blog/release/v22.22.0).
+
+**Docker**, download: [official Docker website](https://www.docker.com/get-started/).
 
 <br>
 
