@@ -15,7 +15,17 @@ from app.schemas.dashboard import (
     DashboardResumoResponse,
 )
 
+def _safe_decimal(value):
+    if value is None or (isinstance(value, Decimal) and (value.is_nan() or value.is_infinite())):
+        return Decimal("0.00")
+    return value
+
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
+
+
+@router.get("", response_model=DashboardResumoResponse)
+async def get_dashboard_root(db: Session = Depends(get_db)):
+    return await get_dashboard_resumo(db)
 
 
 def _build_dashboard_cost_query(db: Session):
@@ -84,11 +94,11 @@ async def get_dashboard_projetos(db: Session = Depends(get_db)):
             nome_projeto=row.nome_projeto,
             responsavel=row.responsavel,
             status=row.status,
-            custo_hora=row.custo_hora or Decimal("0.00"),
-            total_horas=row.total_horas or Decimal("0.00"),
-            custo_materiais=row.custo_materiais or Decimal("0.00"),
-            custo_horas=row.custo_horas or Decimal("0.00"),
-            custo_total=row.custo_total or Decimal("0.00"),
+            custo_hora=_safe_decimal(row.custo_hora),
+            total_horas=_safe_decimal(row.total_horas),
+            custo_materiais=_safe_decimal(row.custo_materiais),
+            custo_horas=_safe_decimal(row.custo_horas),
+            custo_total=_safe_decimal(row.custo_total),
         )
         for row in resultados
     ]
@@ -119,9 +129,9 @@ async def get_dashboard_resumo(db: Session = Depends(get_db)):
 
     return DashboardResumoResponse(
         total_projetos=resultado.total_projetos or 0,
-        custo_total_geral=resultado.custo_total_geral or Decimal("0.00"),
-        custo_medio_por_projeto=resultado.custo_medio_por_projeto or Decimal("0.00"),
-        total_horas_geral=resultado.total_horas_geral or Decimal("0.00"),
-        custo_materiais_geral=resultado.custo_materiais_geral or Decimal("0.00"),
-        custo_horas_geral=resultado.custo_horas_geral or Decimal("0.00"),
+        custo_total_geral=_safe_decimal(resultado.custo_total_geral),
+        custo_medio_por_projeto=_safe_decimal(resultado.custo_medio_por_projeto),
+        total_horas_geral=_safe_decimal(resultado.total_horas_geral),
+        custo_materiais_geral=_safe_decimal(resultado.custo_materiais_geral),
+        custo_horas_geral=_safe_decimal(resultado.custo_horas_geral),
     )
