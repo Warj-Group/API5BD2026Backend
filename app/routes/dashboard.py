@@ -18,11 +18,11 @@ from app.schemas.dashboard import (
 
 def _safe_decimal(value):
     if value is None or (
-        isinstance(value, Decimal)
-        and (value.is_nan() or value.is_infinite())
+        isinstance(value, Decimal) and (value.is_nan() or value.is_infinite())
     ):
         return Decimal("0.00")
     return value
+
 
 router = APIRouter(prefix="/dashboard", tags=["Dashboard"])
 
