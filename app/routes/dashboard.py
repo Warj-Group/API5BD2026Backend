@@ -15,8 +15,12 @@ from app.schemas.dashboard import (
     DashboardResumoResponse,
 )
 
+
 def _safe_decimal(value):
-    if value is None or (isinstance(value, Decimal) and (value.is_nan() or value.is_infinite())):
+    if value is None or (
+        isinstance(value, Decimal)
+        and (value.is_nan() or value.is_infinite())
+    ):
         return Decimal("0.00")
     return value
 
