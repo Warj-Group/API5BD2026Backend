@@ -76,7 +76,9 @@ class DimFornecedor(Base):
     status = Column(String(20), nullable=True)
 
     pedidos_compra = relationship("DimPedidoCompra", back_populates="fornecedor")
-    consumo_materiais = relationship("FactConsumoMateriais", back_populates="fornecedor")
+    consumo_materiais = relationship(
+        "FactConsumoMateriais", back_populates="fornecedor"
+    )
     compras = relationship("FactCompras", back_populates="fornecedor")
 
 

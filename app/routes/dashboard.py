@@ -1,10 +1,10 @@
 from __future__ import annotations
 
-from decimal import Decimal
 from datetime import date
+from decimal import Decimal
 
 from fastapi import APIRouter, Depends, Query
-from sqlalchemy import Numeric, and_, cast, case, func, literal
+from sqlalchemy import Numeric, and_, case, cast, func, literal
 from sqlalchemy.orm import Session, aliased
 
 from app.db.database import get_db
@@ -77,9 +77,7 @@ def _build_dashboard_cost_query(
             FactHorasTrabalhadas.projeto_id.label("projeto_id"),
             cast(
                 func.coalesce(
-                    func.sum(
-                        func.coalesce(FactHorasTrabalhadas.horas_trabalhadas, 0)
-                    ),
+                    func.sum(func.coalesce(FactHorasTrabalhadas.horas_trabalhadas, 0)),
                     0,
                 ),
                 Numeric(12, 2),
@@ -95,16 +93,12 @@ def _build_dashboard_cost_query(
     if horas_filters:
         horas_subquery = horas_subquery.filter(and_(*horas_filters))
 
-    horas_subquery = horas_subquery.group_by(
-        FactHorasTrabalhadas.projeto_id
-    ).subquery()
+    horas_subquery = horas_subquery.group_by(FactHorasTrabalhadas.projeto_id).subquery()
 
     # ----------------------------
     # Subquery de MATERIAIS
     # ----------------------------
-    materiais_filters = _build_period_filters(
-        data_materiais, data_inicio, data_fim
-    )
+    materiais_filters = _build_period_filters(data_materiais, data_inicio, data_fim)
 
     # Fallback:
     # - usa custo_total quando preenchido e diferente de zero
