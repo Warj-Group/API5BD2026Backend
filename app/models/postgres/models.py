@@ -1,273 +1,189 @@
-from sqlalchemy import Column, Date, ForeignKey, Integer, Numeric, String, Text
-from sqlalchemy.orm import relationship
+from sqlalchemy import Column, Date, Integer, Numeric, String
 
 from app.db.database import Base
+
+SCHEMA = "dw"
 
 
 class DimPrograma(Base):
     __tablename__ = "dim_programa"
-    __table_args__ = {"schema": "dw_projeto"}
+    __table_args__ = {"schema": SCHEMA}
 
-    id_programa = Column(Integer, primary_key=True, index=True)
-    codigo_programa = Column(String(20), unique=True, nullable=False)
-    nome_programa = Column(String(200), nullable=True)
-    gerente_programa = Column(String(100), nullable=True)
-    gerente_tecnico = Column(String(100), nullable=True)
-    data_inicio = Column(Date, nullable=True)
-    data_fim_prevista = Column(Date, nullable=True)
-    status = Column(String(20), nullable=True)
-
-    projetos = relationship("DimProjeto", back_populates="programa")
-    horas_trabalhadas = relationship("FactHorasTrabalhadas", back_populates="programa")
-    consumo_materiais = relationship("FactConsumoMateriais", back_populates="programa")
-    compras = relationship("FactCompras", back_populates="programa")
+    programa_key = Column(Integer, primary_key=True, index=True)
+    programa_orig_id = Column(Integer)
+    codigo_programa = Column(String)
+    nome_programa = Column(String)
+    gerente_programa = Column(String)
+    gerente_tecnico = Column(String)
+    data_inicio = Column(Date)
+    data_fim_prevista = Column(Date)
+    status = Column(String)
 
 
 class DimProjeto(Base):
     __tablename__ = "dim_projeto"
-    __table_args__ = {"schema": "dw_projeto"}
+    __table_args__ = {"schema": SCHEMA}
 
-    id_projeto = Column(Integer, primary_key=True, index=True)
-    codigo_projeto = Column(String(20), unique=True, nullable=False)
-    nome_projeto = Column(String(200), nullable=True)
-    programa_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_programa.id_programa"),
-        nullable=True,
-    )
-    responsavel = Column(String(100), nullable=True)
-    custo_hora = Column(Numeric(10, 2), nullable=True)
-    data_inicio = Column(Date, nullable=True)
-    data_fim_prevista = Column(Date, nullable=True)
-    status = Column(String(20), nullable=True)
-
-    programa = relationship("DimPrograma", back_populates="projetos")
-    tarefas = relationship("DimTarefa", back_populates="projeto")
-    horas_trabalhadas = relationship("FactHorasTrabalhadas", back_populates="projeto")
-    consumo_materiais = relationship("FactConsumoMateriais", back_populates="projeto")
-    compras = relationship("FactCompras", back_populates="projeto")
-
-
-class DimMaterial(Base):
-    __tablename__ = "dim_material"
-    __table_args__ = {"schema": "dw_projeto"}
-
-    id_material = Column(Integer, primary_key=True, index=True)
-    codigo_material = Column(String(50), unique=True, nullable=False)
-    descricao = Column(Text, nullable=True)
-    categoria = Column(String(100), nullable=True)
-    fabricante = Column(String(100), nullable=True)
-    custo_estimado = Column(Numeric(10, 2), nullable=True)
-    status = Column(String(20), nullable=True)
-
-    consumo_materiais = relationship("FactConsumoMateriais", back_populates="material")
-
-
-class DimFornecedor(Base):
-    __tablename__ = "dim_fornecedor"
-    __table_args__ = {"schema": "dw_projeto"}
-
-    id_fornecedor = Column(Integer, primary_key=True, index=True)
-    codigo_fornecedor = Column(String(20), unique=True, nullable=False)
-    razao_social = Column(String(200), nullable=True)
-    cidade = Column(String(100), nullable=True)
-    estado = Column(String(50), nullable=True)
-    categoria = Column(String(100), nullable=True)
-    status = Column(String(20), nullable=True)
-
-    pedidos_compra = relationship("DimPedidoCompra", back_populates="fornecedor")
-    consumo_materiais = relationship(
-        "FactConsumoMateriais", back_populates="fornecedor"
-    )
-    compras = relationship("FactCompras", back_populates="fornecedor")
-
-
-class DimUsuario(Base):
-    __tablename__ = "dim_usuario"
-    __table_args__ = {"schema": "dw_projeto"}
-
-    id_usuario = Column(Integer, primary_key=True, index=True)
-    nome_usuario = Column(String(100), unique=True, nullable=False)
-
-    horas_trabalhadas = relationship("FactHorasTrabalhadas", back_populates="usuario")
+    projeto_key = Column(Integer, primary_key=True, index=True)
+    projeto_orig_id = Column(Integer)
+    programa_key = Column(Integer)
+    codigo_projeto = Column(String)
+    nome_projeto = Column(String)
+    responsavel = Column(String)
+    custo_hora = Column(Numeric)
+    data_inicio = Column(Date)
+    data_fim_prevista = Column(Date)
+    status = Column(String)
 
 
 class DimTarefa(Base):
     __tablename__ = "dim_tarefa"
-    __table_args__ = {"schema": "dw_projeto"}
+    __table_args__ = {"schema": SCHEMA}
 
-    id_tarefa = Column(Integer, primary_key=True, index=True)
-    codigo_tarefa = Column(String(20), unique=True, nullable=False)
-    projeto_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_projeto.id_projeto"),
-        nullable=True,
-    )
-    titulo = Column(String(200), nullable=True)
-    responsavel = Column(String(100), nullable=True)
-    estimativa_horas = Column(Integer, nullable=True)
-    data_inicio = Column(Date, nullable=True)
-    data_fim_prevista = Column(Date, nullable=True)
-    status = Column(String(20), nullable=True)
+    tarefa_key = Column(Integer, primary_key=True, index=True)
+    tarefa_orig_id = Column(Integer)
+    projeto_key = Column(Integer)
+    codigo_tarefa = Column(String)
+    titulo = Column(String)
+    responsavel = Column(String)
+    estimativa_horas = Column(Numeric)
+    data_inicio = Column(Date)
+    data_fim_prevista = Column(Date)
+    status = Column(String)
 
-    projeto = relationship("DimProjeto", back_populates="tarefas")
-    horas_trabalhadas = relationship("FactHorasTrabalhadas", back_populates="tarefa")
+
+class DimMaterial(Base):
+    __tablename__ = "dim_material"
+    __table_args__ = {"schema": SCHEMA}
+
+    material_key = Column(Integer, primary_key=True, index=True)
+    material_orig_id = Column(Integer)
+    codigo_material = Column(String)
+    descricao = Column(String)
+    categoria = Column(String)
+    fabricante = Column(String)
+    custo_estimado = Column(Numeric)
+    status = Column(String)
+
+
+class DimFornecedor(Base):
+    __tablename__ = "dim_fornecedor"
+    __table_args__ = {"schema": SCHEMA}
+
+    fornecedor_key = Column(Integer, primary_key=True, index=True)
+    fornecedor_orig_id = Column(Integer)
+    codigo_fornecedor = Column(String)
+    razao_social = Column(String)
+    cidade = Column(String)
+    estado = Column(String)
+    categoria = Column(String)
+    status = Column(String)
+
+
+class DimUsuario(Base):
+    __tablename__ = "dim_usuario"
+    __table_args__ = {"schema": SCHEMA}
+
+    usuario_key = Column(Integer, primary_key=True, index=True)
+    nome_usuario = Column(String)
+
+
+class DimLocalizacao(Base):
+    __tablename__ = "dim_localizacao"
+    __table_args__ = {"schema": SCHEMA}
+
+    localizacao_key = Column(Integer, primary_key=True, index=True)
+    localizacao = Column(String)
 
 
 class DimData(Base):
     __tablename__ = "dim_data"
-    __table_args__ = {"schema": "dw_projeto"}
+    __table_args__ = {"schema": SCHEMA}
 
-    id_data = Column(Integer, primary_key=True, index=True)
-    data = Column(Date, unique=True, nullable=False)
-    dia = Column(Integer, nullable=True)
-    mes = Column(Integer, nullable=True)
-    nome_mes = Column(String(20), nullable=True)
-    trimestre = Column(Integer, nullable=True)
-    ano = Column(Integer, nullable=True)
-    dia_semana = Column(Integer, nullable=True)
-    nome_dia_semana = Column(String(20), nullable=True)
-
-    horas_trabalhadas = relationship("FactHorasTrabalhadas", back_populates="data")
-    consumo_materiais = relationship("FactConsumoMateriais", back_populates="data")
-    compras = relationship("FactCompras", back_populates="data")
+    data_key = Column(Integer, primary_key=True, index=True)
+    data = Column(Date)
+    ano = Column(Integer)
+    mes = Column(Integer)
+    dia = Column(Integer)
+    trimestre = Column(Integer)
+    nome_mes = Column(String)
+    dia_semana = Column(Integer)
 
 
-class DimPedidoCompra(Base):
-    __tablename__ = "dim_pedido_compra"
-    __table_args__ = {"schema": "dw_projeto"}
-
-    id_pedido = Column(Integer, primary_key=True, index=True)
-    numero_pedido = Column(String(20), unique=True, nullable=False)
-    solicitacao_id = Column(Integer, nullable=True)
-    fornecedor_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor"),
-        nullable=True,
-    )
-    data_pedido = Column(Date, nullable=True)
-    data_previsao_entrega = Column(Date, nullable=True)
-    valor_total = Column(Numeric(12, 2), nullable=True)
-    status = Column(String(20), nullable=True)
-
-    fornecedor = relationship("DimFornecedor", back_populates="pedidos_compra")
-    compras = relationship("FactCompras", back_populates="pedido")
-
-
-class FactHorasTrabalhadas(Base):
+class FatoHorasTrabalhadas(Base):
     __tablename__ = "fato_horas_trabalhadas"
-    __table_args__ = {"schema": "dw_projeto"}
+    __table_args__ = {"schema": SCHEMA}
 
-    id_fato_horas = Column(Integer, primary_key=True, index=True)
-    programa_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_programa.id_programa"),
-        nullable=True,
-    )
-    projeto_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_projeto.id_projeto"),
-        nullable=True,
-    )
-    tarefa_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_tarefa.id_tarefa"),
-        nullable=True,
-    )
-    usuario_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_usuario.id_usuario"),
-        nullable=True,
-    )
-    data_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_data.id_data"),
-        nullable=True,
-    )
-    horas_trabalhadas = Column(Numeric(6, 2), nullable=True)
-
-    programa = relationship("DimPrograma", back_populates="horas_trabalhadas")
-    projeto = relationship("DimProjeto", back_populates="horas_trabalhadas")
-    tarefa = relationship("DimTarefa", back_populates="horas_trabalhadas")
-    usuario = relationship("DimUsuario", back_populates="horas_trabalhadas")
-    data = relationship("DimData", back_populates="horas_trabalhadas")
+    fato_horas_key = Column(Integer, primary_key=True, index=True)
+    horas_trabalhadas_orig_id = Column(Integer)
+    tarefa_key = Column(Integer)
+    usuario_key = Column(Integer)
+    data_key = Column(Integer)
+    horas_trabalhadas = Column(Numeric)
 
 
-class FactConsumoMateriais(Base):
-    __tablename__ = "fato_consumo_materiais"
-    __table_args__ = {"schema": "dw_projeto"}
+class FatoSolicitacoesCompra(Base):
+    __tablename__ = "fato_solicitacoes_compra"
+    __table_args__ = {"schema": SCHEMA}
 
-    id_fato_material = Column(Integer, primary_key=True, index=True)
-    programa_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_programa.id_programa"),
-        nullable=True,
-    )
-    projeto_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_projeto.id_projeto"),
-        nullable=True,
-    )
-    material_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_material.id_material"),
-        nullable=True,
-    )
-    fornecedor_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor"),
-        nullable=True,
-    )
-    data_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_data.id_data"),
-        nullable=True,
-    )
-    quantidade_empenhada = Column(Integer, nullable=True)
-    custo_unitario = Column(Numeric(10, 2), nullable=True)
-    custo_total = Column(Numeric(12, 2), nullable=True)
-
-    programa = relationship("DimPrograma", back_populates="consumo_materiais")
-    projeto = relationship("DimProjeto", back_populates="consumo_materiais")
-    material = relationship("DimMaterial", back_populates="consumo_materiais")
-    fornecedor = relationship("DimFornecedor", back_populates="consumo_materiais")
-    data = relationship("DimData", back_populates="consumo_materiais")
+    fato_solicitacao_key = Column(Integer, primary_key=True, index=True)
+    solicitacao_orig_id = Column(Integer)
+    numero_solicitacao = Column(String)
+    projeto_key = Column(Integer)
+    material_key = Column(Integer)
+    data_key = Column(Integer)
+    quantidade = Column(Numeric)
+    prioridade = Column(String)
+    status = Column(String)
 
 
-class FactCompras(Base):
-    __tablename__ = "fato_compras"
-    __table_args__ = {"schema": "dw_projeto"}
+class FatoPedidosCompra(Base):
+    __tablename__ = "fato_pedidos_compra"
+    __table_args__ = {"schema": SCHEMA}
 
-    id_fato_compra = Column(Integer, primary_key=True, index=True)
-    pedido_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_pedido_compra.id_pedido"),
-        nullable=True,
-    )
-    programa_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_programa.id_programa"),
-        nullable=True,
-    )
-    projeto_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_projeto.id_projeto"),
-        nullable=True,
-    )
-    fornecedor_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_fornecedor.id_fornecedor"),
-        nullable=True,
-    )
-    data_id = Column(
-        Integer,
-        ForeignKey("dw_projeto.dim_data.id_data"),
-        nullable=True,
-    )
-    valor_alocado = Column(Numeric(12, 2), nullable=True)
+    fato_pedido_key = Column(Integer, primary_key=True, index=True)
+    pedido_compra_orig_id = Column(Integer)
+    numero_pedido = Column(String)
+    solicitacao_id = Column(Integer)
+    projeto_id = Column(Integer)
+    material_id = Column(Integer)
+    fornecedor_key = Column(Integer)
+    data_pedido_key = Column(Integer)
+    data_previsao_key = Column(Integer)
+    valor_total = Column(Numeric)
+    status = Column(String)
 
-    pedido = relationship("DimPedidoCompra", back_populates="compras")
-    programa = relationship("DimPrograma", back_populates="compras")
-    projeto = relationship("DimProjeto", back_populates="compras")
-    fornecedor = relationship("DimFornecedor", back_populates="compras")
-    data = relationship("DimData", back_populates="compras")
+
+class FatoComprasProjeto(Base):
+    __tablename__ = "fato_compras_projeto"
+    __table_args__ = {"schema": SCHEMA}
+
+    fato_compra_projeto_key = Column(Integer, primary_key=True, index=True)
+    compra_projeto_orig_id = Column(Integer)
+    pedido_compra_id = Column(Integer)
+    projeto_key = Column(Integer)
+    valor_alocado = Column(Numeric)
+
+
+class FatoEmpenhoMateriais(Base):
+    __tablename__ = "fato_empenho_materiais"
+    __table_args__ = {"schema": SCHEMA}
+
+    fato_empenho_key = Column(Integer, primary_key=True, index=True)
+    empenho_material_orig_id = Column(Integer)
+    projeto_key = Column(Integer)
+    material_key = Column(Integer)
+    data_key = Column(Integer)
+    quantidade_empenhada = Column(Numeric)
+
+
+class FatoEstoqueMateriaisProjeto(Base):
+    __tablename__ = "fato_estoque_materiais_projeto"
+    __table_args__ = {"schema": SCHEMA}
+
+    fato_estoque_key = Column(Integer, primary_key=True, index=True)
+    estoque_material_projeto_orig_id = Column(Integer)
+    projeto_key = Column(Integer)
+    material_key = Column(Integer)
+    localizacao_key = Column(Integer)
+    quantidade = Column(Numeric)

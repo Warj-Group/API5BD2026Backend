@@ -1,59 +1,34 @@
-import os
-
-import uvicorn
-from fastapi import Depends, FastAPI
-from fastapi.middleware.cors import CORSMiddleware
+from fastapi import FastAPI
 from sqlalchemy import text
-from sqlalchemy.orm import Session
 
-from app.core.config import settings
-from app.db.database import get_db
-from app.routes.dashboard import router as dashboard_router
+from app.db.database import SessionLocal
 from app.routes.data import router as data_router
 
 app = FastAPI(
-    title=settings.APP_NAME, version=settings.APP_VERSION, debug=settings.DEBUG
-)
-
-app.add_middleware(
-    CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    title="DW Projeto API",
+    version="2.0.0",
+    description="API compatível com o schema gerado pelo ETL v2 em modelo estrela.",
 )
 
 app.include_router(data_router)
-app.include_router(dashboard_router)
 
 
 @app.get("/")
-async def root():
+def root():
     return {
-        "message": "API Python para Data Warehouse Projeto",
-        "version": settings.APP_VERSION,
+        "message": "API Python para consulta do Data Warehouse Projeto",
+        "version": "2.0.0",
         "status": "online",
+        "compatibility": "etl_backend_star_v2",
+        "docs": "/docs",
     }
 
 
 @app.get("/health")
-async def health():
-    return {"status": "healthy"}
-
-
-@app.get("/db-test")
-async def db_test(db: Session = Depends(get_db)):
+def health():
+    db = SessionLocal()
     try:
-        result = db.execute(text("SELECT 1")).fetchone()
-        return {"status": "Database connected", "result": result[0]}
-    except Exception as e:
-        return {"status": "Database connection failed", "error": str(e)}
-
-
-if __name__ == "__main__":
-    uvicorn.run(
-        "app.main:app",
-        host=os.getenv("APP_HOST", "127.0.0.1"),
-        port=int(os.getenv("APP_PORT", "8000")),
-        reload=True,
-    )
+        db.execute(text("SELECT 1"))
+        return {"status": "ok", "database": "connected"}
+    finally:
+        db.close()
